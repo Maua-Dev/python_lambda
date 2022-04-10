@@ -12,6 +12,7 @@ def hellow():
     return 'vai!'
 
 def lambda_handler(event, context):
+    print(event)
     return app(event, context)
 
 # event = {'rawPath': '/hello'}
