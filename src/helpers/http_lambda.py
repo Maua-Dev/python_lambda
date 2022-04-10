@@ -7,30 +7,17 @@ class HttpResponse:
     body: any = {"message": "No response"}
     headers: dict = {"Content-Type": "application/json"}
 
-    def __init__(self, response: any = None) -> None:
+    def __init__(self, body: any = None, status_code: int = None,  headers: dict = None) -> None:
         """
         Constructor for HttpResponse.
-
-        Default values are:
-            status_code: 200
-            body: {"message": "No response"}
-            headers: {"content-type": "application/json"}
-            isBase64Encoded: False
-
         Args:
-            response:  can be a dict, a string - dict can have status_code (int), body(str or dict) and/or headers (dict)
-
+            body: The body of the response. Can be a string or a dict.
+            status_code: The status code of the response. Defaults to 200.
+            headers: The headers of the response. Defaults to {"Content-Type": "application/json"}.
         """
-        if not response:
-            return
-
-        if isinstance(response, str):
-            self.body = response
-
-        elif isinstance(response, dict):
-            self.body = response["body"] if "body" in response else HttpResponse.body
-            self.headers = response["headers"] if "headers" in response else HttpResponse.headers
-            self.status_code = response["status_code"] if "status_code" in response else HttpResponse.status_code
+        self.body = body or HttpResponse.body
+        self.headers = headers or HttpResponse.headers
+        self.status_code = status_code or HttpResponse.status_code
 
     def toDict(self) -> dict:
         """
@@ -56,14 +43,14 @@ class HttpResponse:
         )
 
 
-class LambdaHttp:
-    method: str
-    path: str
-    protocol: str
-    source_ip: str
-    user_agent: str
+class LambdaDefaultHTTP:
+    method: str = ""
+    path: str = ""
+    protocol: str = ""
+    source_ip: str = ""
+    user_agent: str = ""
 
-    def __init__(self, data: dict) -> None:
+    def __init__(self, data: dict = None) -> None:
         """
         Constructor for LambdaHttp.
 
@@ -71,16 +58,21 @@ class LambdaHttp:
             event: dict - the event passed to the lambda function.
 
         """
-        self.method = data["method"]
-        self.path = data["path"]
-        self.protocol = data["protocol"]
-        self.source_ip = data["sourceIp"]
-        self.user_agent = data["userAgent"]
+        if not data:
+            return
+        self.method = data.get("method") or ""
+        self.path = data.get("path") or ""
+        self.protocol = data.get("protocol") or ""
+        self.source_ip = data.get("sourceIp") or ""
+        self.user_agent = data.get("userAgent") or ""
 
     def __eq__(self, other):
-        if not isinstance(other, LambdaHttp):
+        if not isinstance(other, LambdaDefaultHTTP):
             return False
         return self.method == other.method and self.path == other.path and self.protocol == other.protocol and self.source_ip == other.source_ip and self.user_agent == other.user_agent
+
+    def __repr__(self):
+        return f"LambdaHttp (method={self.method}, path={self.path}, protocol={self.protocol}, source_ip={self.source_ip}, user_agent={self.user_agent})"
 
 
 class HttpRequest:
@@ -94,7 +86,7 @@ class HttpRequest:
     headers: dict
     query_string_parameters: dict
     request_context: dict
-    http: LambdaHttp
+    http: LambdaDefaultHTTP
     body: any
 
     def __init__(self, data: dict = None) -> None:
@@ -107,10 +99,10 @@ class HttpRequest:
         self.headers = data.get("headers")
         self.query_string_parameters = data.get("queryStringParameters")
         self.request_context = data.get("requestContext")
-        self.http = LambdaHttp(self.request_context["http"])
+        self.http = LambdaDefaultHTTP(self.request_context.get("http") if self.request_context else None)
         self.body = data.get("body")
 
+
     def __repr__(self):
-        return (
-            f"HttpRequest (version={self.version}, raw_path={self.raw_path}, raw_query_string={self.raw_query_string}, headers={self.headers}, query_string_parameters={self.query_string_parameters}, request_context={self.request_context}, http={self.http}, body={self.body})"
-        )
+        return f"HttpRequest (version={self.version}, raw_path={self.raw_path}, raw_query_string={self.raw_query_string}, headers={self.headers}, query_string_parameters={self.query_string_parameters}, request_context={self.request_context}, http={self.http}, body={self.body})"
+

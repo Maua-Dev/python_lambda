@@ -19,7 +19,7 @@ class TestHttpResponse(unittest.TestCase):
 
 
     def test_valid_str_response(self):
-        response = HttpResponse("Hello, world!")
+        response = HttpResponse(body="Hello, world!")
         expected_response = {
            "statusCode": 200,
             "headers": {
@@ -31,7 +31,7 @@ class TestHttpResponse(unittest.TestCase):
         assert response.toDict() == expected_response
 
     def test_valid_response(self):
-        response = HttpResponse(TestHttpResponse.valid_response_data)
+        response = HttpResponse(**self.valid_response_data)
         expected_response = {
            "statusCode": 201,
             "headers": {
