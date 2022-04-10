@@ -1,4 +1,4 @@
-from app_lambda import LambdaApp
+from src.app_lambda import LambdaApp
 
 
 app = LambdaApp()
