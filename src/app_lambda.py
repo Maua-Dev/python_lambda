@@ -10,18 +10,19 @@ class LambdaApp:
     allowed_methods: list = ['GET', 'POST', 'PUT', 'DELETE']
 
     def __init__(self):
-        self.paths = {x: {} for x in self.allowed_methods}
+        self.paths = {m: {} for m in self.allowed_methods}
 
     def add_route(self, path: str, method: str = 'GET'):
         def wrapper(func):
-            if path in self.paths['GET']:
+            if path in self.paths[method]:
                 raise PathAlreadyExistsError(path)
-            self.paths['GET'][path] = func
+            self.paths[method][path] = func
 
         return wrapper
 
-    def __call__(self, request: HttpRequest, context) -> HttpResponse:
+    def __call__(self, event, context) -> HttpResponse:
         # checks if path exists
+        request = HttpRequest(event)
         if request.http.path in self.paths[request.http.method]:
             # calls the function
             return self.paths[request.http.method][request.http.path](request, context)
