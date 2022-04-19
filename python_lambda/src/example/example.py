@@ -1,11 +1,12 @@
 from python_lambda.src.app_lambda import LambdaApp
 from python_lambda.src.helpers.http_lambda import HttpResponse, HttpRequest
+import asyncio
 
 app = LambdaApp()
 
 
 @app.add_route(path='/hi', method="GET")
-def hello(request: HttpRequest, response: HttpResponse):
+async def hello(request: HttpRequest, response: HttpResponse):
     body = f'Hello {request.query_string_parameters["name"]}'
     response.body = body
     response.status_code = 400
@@ -13,16 +14,17 @@ def hello(request: HttpRequest, response: HttpResponse):
 
 
 @app.add_route(path='/hello', method="GET")
-def hellow(request, response):
+async def hellow(request, response):
     return HttpResponse(body='vai!')
 
 @app.add_route(path='/header', method="POST")
-def show_headers(request, response):
+async def show_headers(request, response):
     return HttpResponse(body=request.headers)
 
 
 def lambda_handler(event, context):
-    return app(event).toDict()
+    res = app.async_call(event)
+    return res.toDict()
 
 event = {
     "queryStringParameters": {
@@ -41,3 +43,9 @@ event = {
 }
 
 print(lambda_handler(event, None))
+
+# async def main():
+#     resp = await
+#     print(resp)
+#
+# asyncio.run(main())

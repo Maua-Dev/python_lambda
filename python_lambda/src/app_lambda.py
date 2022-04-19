@@ -1,3 +1,5 @@
+import asyncio
+
 from python_lambda.src.helpers.http_lambda import HttpResponse, HttpRequest
 from python_lambda.src.errors.path_errors import PathAlreadyExistsError
 
@@ -20,12 +22,20 @@ class LambdaApp:
 
         return wrapper
 
-    def __call__(self, event) -> HttpResponse:
+
+    def __call__(self, event):
         # checks if path exists
         request = HttpRequest(event)
         response = HttpResponse()
         if request.http.path in self.paths[request.http.method]:
             # calls the function
-            return self.paths[request.http.method][request.http.path](request, response)
-
+            res = self.paths[request.http.method][request.http.path](request, response)
+            return res
         return HttpResponse({"status_code": 404, "body": {"message": "Not Found"}})
+
+    def async_call(self, event) -> HttpResponse:
+        loop = asyncio.get_event_loop()
+        res = loop.run_until_complete(self(event))
+        return res
+
+
