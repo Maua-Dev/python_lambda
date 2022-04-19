@@ -1,7 +1,6 @@
-import json
 import unittest
 
-from src.helpers.http_lambda import HttpResponse
+from python_lambda.src.helpers.http_lambda import HttpResponse
 
 
 class TestHttpResponse(unittest.TestCase):

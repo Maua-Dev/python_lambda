@@ -1,7 +1,5 @@
-import json
-
-from src.app_lambda import LambdaApp
-from src.helpers.http_lambda import HttpRequest, HttpResponse
+from python_lambda.src.app_lambda import LambdaApp
+from python_lambda.src.helpers.http_lambda import HttpResponse
 
 app = LambdaApp()
 

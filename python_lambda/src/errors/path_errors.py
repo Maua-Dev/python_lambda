@@ -1,4 +1,4 @@
-from src.errors.base_error import BaseError
+from python_lambda.src.errors.base_error import BaseError
 
 
 class PathAlreadyExistsError(BaseError):

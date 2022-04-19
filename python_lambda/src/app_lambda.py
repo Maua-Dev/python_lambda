@@ -1,5 +1,5 @@
-from src.helpers.http_lambda import HttpResponse, HttpRequest
-from src.errors.path_errors import PathAlreadyExistsError
+from python_lambda.src.helpers.http_lambda import HttpResponse, HttpRequest
+from python_lambda.src.errors.path_errors import PathAlreadyExistsError
 
 
 class LambdaApp:
