@@ -1,26 +1,28 @@
 from python_lambda.src.app_lambda import LambdaApp
-from python_lambda.src.helpers.http_lambda import HttpResponse
+from python_lambda.src.helpers.http_lambda import HttpResponse, HttpRequest
 
 app = LambdaApp()
 
 
 @app.add_route(path='/hi', method="GET")
-def hello(request, context):
+def hello(request: HttpRequest, response: HttpResponse):
     body = f'Hello {request.query_string_parameters["name"]}'
-    return HttpResponse(body=body, status_code=400)
+    response.body = body
+    response.status_code = 400
+    return response
 
 
 @app.add_route(path='/hello', method="GET")
-def hellow(request, context):
+def hellow(request, response):
     return HttpResponse(body='vai!')
 
 @app.add_route(path='/header', method="POST")
-def show_headers(request, context):
+def show_headers(request, response):
     return HttpResponse(body=request.headers)
 
 
 def lambda_handler(event, context):
-    return app(event, context).toDict()
+    return app(event).toDict()
 
 event = {
     "queryStringParameters": {

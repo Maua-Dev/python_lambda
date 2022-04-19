@@ -20,11 +20,12 @@ class LambdaApp:
 
         return wrapper
 
-    def __call__(self, event, context) -> HttpResponse:
+    def __call__(self, event) -> HttpResponse:
         # checks if path exists
         request = HttpRequest(event)
+        response = HttpResponse()
         if request.http.path in self.paths[request.http.method]:
             # calls the function
-            return self.paths[request.http.method][request.http.path](request, context)
+            return self.paths[request.http.method][request.http.path](request, response)
 
         return HttpResponse({"status_code": 404, "body": {"message": "Not Found"}})
