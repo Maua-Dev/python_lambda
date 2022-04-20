@@ -7,7 +7,7 @@ class HttpResponse:
     body: any = {"message": "No response"}
     headers: dict = {"Content-Type": "application/json"}
 
-    def __init__(self, body: any = None, status_code: int = None,  headers: dict = None) -> None:
+    def __init__(self, body: any = None, status_code: int = None, headers: dict = None) -> None:
         """
         Constructor for HttpResponse.
         Args:
@@ -102,7 +102,11 @@ class HttpRequest:
         self.http = LambdaDefaultHTTP(self.request_context.get("http") if self.request_context else None)
         self.body = data.get("body")
 
-
     def __repr__(self):
         return f"HttpRequest (version={self.version}, raw_path={self.raw_path}, raw_query_string={self.raw_query_string}, headers={self.headers}, query_string_parameters={self.query_string_parameters}, request_context={self.request_context}, http={self.http}, body={self.body})"
 
+
+class HttpResponseRedirect(HttpResponse):
+
+    def __init__(self, location: str) -> None:
+        super().__init__(status_code=302, headers={"Location": location})

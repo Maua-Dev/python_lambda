@@ -21,6 +21,12 @@ async def hellow(request, response):
 async def show_headers(request, response):
     return HttpResponse(body=request.headers)
 
+@app.add_route(path='/redirect', method="GET")
+async def redirect(request, response):
+    response.status_code = 302
+    response.headers['Location'] = 'https://google.com'
+    return response
+
 
 def lambda_handler(event, context):
     res = app.async_call(event)
@@ -33,7 +39,7 @@ event = {
     "requestContext": {
             "http": {
                 "method": "GET",
-                "path": "/hi",
+                "path": "/hidsa",
                 "protocol": "HTTP/1.1",
                 "sourceIp": "123.123.123.123",
                 "userAgent": "agent"

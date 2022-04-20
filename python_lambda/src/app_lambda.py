@@ -35,7 +35,10 @@ class LambdaApp:
 
     def async_call(self, event) -> HttpResponse:
         loop = asyncio.get_event_loop()
-        res = loop.run_until_complete(self(event))
-        return res
+        request = HttpRequest(event)
+        if request.http.path in self.paths[request.http.method]:
+            res = loop.run_until_complete(self(event))
+            return res
+        return HttpResponse({"status_code": 404, "body": {"message": "Not Found"}})
 
 
