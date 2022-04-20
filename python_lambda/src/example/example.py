@@ -1,3 +1,5 @@
+import json
+
 from python_lambda.src.app_lambda import LambdaApp
 from python_lambda.src.helpers.http_lambda import HttpResponse, HttpRequest
 import asyncio
@@ -32,7 +34,7 @@ def lambda_handler(event, context):
     res = app.async_call(event)
     return res.toDict()
 
-event = {
+event = json.dumps({
     "queryStringParameters": {
         "name": "Bruno"
     },
@@ -46,7 +48,7 @@ event = {
             }
         },
         "body": "Hello from client :) !"
-}
+})
 
 print(lambda_handler(event, None))
 
