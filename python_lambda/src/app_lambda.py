@@ -1,5 +1,4 @@
 import asyncio
-import json
 
 from python_lambda.src.helpers.http_lambda import HttpResponse, HttpRequest
 from python_lambda.src.errors.path_errors import PathAlreadyExistsError
@@ -23,13 +22,11 @@ class LambdaApp:
 
         return wrapper
 
-    def getRequestResponse(self, event):
-        return HttpRequest(json.loads(event)), HttpResponse()
-
 
     def __call__(self, event):
         # checks if path exists
-        request, response = self.getRequestResponse(event)
+        request = HttpRequest(event)
+        response = HttpResponse()
         if request.http.path in self.paths[request.http.method]:
             # calls the function
             res = self.paths[request.http.method][request.http.path](request, response)
@@ -38,7 +35,7 @@ class LambdaApp:
 
     def async_call(self, event) -> HttpResponse:
         loop = asyncio.get_event_loop()
-        request, _ = self.getRequestResponse(event)
+        request = HttpRequest(event)
         if request.http.path in self.paths[request.http.method]:
             res = loop.run_until_complete(self(event))
             return res

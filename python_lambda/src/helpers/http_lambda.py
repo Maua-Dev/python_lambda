@@ -1,3 +1,6 @@
+import json
+
+
 class HttpResponse:
     """
     A class to represent an HTTP response for lambda URL.
@@ -100,7 +103,7 @@ class HttpRequest:
         self.query_string_parameters = data.get("queryStringParameters")
         self.request_context = data.get("requestContext")
         self.http = LambdaDefaultHTTP(self.request_context.get("http") if self.request_context else None)
-        self.body = data.get("body")
+        self.body = json.loads(data.get("body")) if data.get("body") else None
 
     def __repr__(self):
         return f"HttpRequest (version={self.version}, raw_path={self.raw_path}, raw_query_string={self.raw_query_string}, headers={self.headers}, query_string_parameters={self.query_string_parameters}, request_context={self.request_context}, http={self.http}, body={self.body})"
